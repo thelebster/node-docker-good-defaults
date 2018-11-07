@@ -12,7 +12,7 @@
  - **Enable debug from host to container**. opens the inspect port 9229 for using host-based debugging like chrome tools or VS Code. Nodemon enables `--inspect` by default in docker-compose.
  - **Provides VSCode debug configs and tasks for tests**. for Visual Studio Code fans, `.vscode` directory has the goods, thanks to @JPLemelin.
  - **Small image and quick re-builds**. `COPY` in `package.json` and run `npm install` **before** `COPY` in your source code. This saves big on build time and keep container lean.
- - **Bind-mount package.json**. This allows adding packages in realtime without rebuilding images. e.g. `dce node npm install --save <package name>`
+ - **Bind-mount package.json**. This allows adding packages in realtime without rebuilding images. e.g. `dce node npm install --save <package name>` (dosn't work on all systems)
 
 
 ### Production-minded Features
@@ -28,7 +28,7 @@
 
  - You have Docker and Docker-Compose installed (Docker for Mac, Docker for Windows, get.docker.com and manual Compose installed for Linux).
  - You want to use Docker for local development (i.e. never need to install node/npm on host) and have dev and prod Docker images be as close as possible.
- - You don't want to loose fidelity in your dev workflow. You want a easy environment setup, using local editors, node debug/inspect, local code repo, while node server runs in a container.
+ - You don't want to lose fidelity in your dev workflow. You want a easy environment setup, using local editors, node debug/inspect, local code repo, while node server runs in a container.
  - You use `docker-compose` for local development only (docker-compose was never intended to be a production deployment tool anyway).
  - The `docker-compose.yml` is not meant for `docker stack deploy` in Docker Swarm, it's meant for happy local development. Use `docker-stack.yml` for Swarm.
 
@@ -58,6 +58,16 @@ To execute the unit-tests, you would:
  - You can use the *vscode* to debug unit-tests with config `Docker Test (Attach 9230 --inspect)`, It will:
    - Start a debugging process in the container and wait-for-debugger, this is done by *vscode tasks*
    - It will also kill previous debugging process if existing.
+
+### Ways to improve security
+
+#### Run Node.js as Non-Root User
+
+As mentioned in the official docker node image docs, Docker runs the image as root. This can pose a potential security issue.
+  - https://github.com/nodejs/docker-node/blob/master/docs/BestPractices.md#non-root-user
+
+As a security best practice, it is recommended for node apps to listen on non-privileged ports as mentioned here:
+  - https://github.com/i0natan/nodebestpractices/blob/master/sections/security/non-root-user.md
 
 ### Other Resources
 
